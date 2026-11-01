@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthTrack | Patient Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <a class="brand" href="/" aria-label="HealthTrack home">
+            <div class="brand-icon">H</div>
+            <div>
+                <h2>HealthTrack</h2>
+                <small>Patient Management</small>
+            </div>
+        </a>
+
+        <p class="nav-label">WORKSPACE</p>
+        <nav>
+            <a href="/" class="nav-item active"><span class="nav-icon">▦</span> Dashboard</a>
+            <a href="#patients" class="nav-item"><span class="nav-icon">♙</span> Patients</a>
+            <a href="#patient-form" class="nav-item" onclick="showPatientForm(); return false;"><span class="nav-icon">＋</span> Add Patient</a>
+        </nav>
+
+        <div class="sidebar-note">
+            <div class="note-icon">✦</div>
+            <strong>Health insights</strong>
+            <p>Keep patient information organised and review AI-generated remarks.</p>
+        </div>
+
+        <div class="sidebar-footer">
+            <span class="online-dot"></span>
+            System Online
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">HEALTHTRACK WORKSPACE</p>
+                <h1>Dashboard overview</h1>
+                <p class="page-subtitle">Manage patient records and review health measurements.</p>
+            </div>
+            <div class="topbar-actions">
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+                    <span class="theme-toggle-icon" id="themeToggleIcon">☾</span>
+                    <span id="themeToggleLabel">Dark mode</span>
+                </button>
+                <button class="primary-btn" onclick="showPatientForm()"><span>＋</span> Add Patient</button>
+            </div>
+        </header>
+
+        <section class="welcome-card">
+            <div class="welcome-copy">
+                <span class="welcome-kicker"><span class="sparkle">✦</span> PATIENT CARE, MADE CLEAR</span>
+                <h2>A clearer view of<br><em>patient health.</em></h2>
+                <p>Manage patient information, track recorded measurements and review AI-generated health remarks in one place.</p>
+                <button class="welcome-btn" onclick="document.getElementById('patients').scrollIntoView({behavior:'smooth'})">View patient records <span>→</span></button>
+            </div>
+            <div class="wellness-art" aria-hidden="true">
+                <div class="art-orbit orbit-one"></div>
+                <div class="art-orbit orbit-two"></div>
+                <div class="art-leaf leaf-one">✦</div>
+                <div class="art-leaf leaf-two">✧</div>
+                <div class="art-core"><span>✚</span></div>
+                <div class="art-caption">CARE<br> &nbsp; & WELLNESS</div>
+            </div>
+            <div class="welcome-decoration"></div>
+        </section>
+
+        <section class="stats-grid" aria-label="Patient statistics">
+            <article class="stat-card stat-green">
+                <div class="stat-top"><span>Total patients</span><span class="stat-icon">♙</span></div>
+                <h2 id="totalPatients">0</h2>
+                <small>Registered records</small>
+            </article>
+            <article class="stat-card stat-blue">
+                <div class="stat-top"><span>Average glucose</span><span class="stat-icon">⌁</span></div>
+                <h2 id="avgGlucose">—</h2>
+                <small>Recorded measurements</small>
+            </article>
+            <article class="stat-card stat-orange">
+                <div class="stat-top"><span>Average haemoglobin</span><span class="stat-icon">◉</span></div>
+                <h2 id="avgHaemoglobin">—</h2>
+                <small>Recorded measurements</small>
+            </article>
+            <article class="stat-card stat-purple">
+                <div class="stat-top"><span>Average cholesterol</span><span class="stat-icon">♡</span></div>
+                <h2 id="avgCholesterol">—</h2>
+                <small>Recorded measurements</small>
+            </article>
+        </section>
+
+        <section id="patient-form" class="panel form-panel hidden">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">PATIENT INFORMATION</p>
+                    <h2 id="formTitle">Register new patient</h2>
+                </div>
+                <button class="close-btn" onclick="hidePatientForm()" aria-label="Close form">✕</button>
+            </div>
+
+            <form id="patientForm">
+                <input type="hidden" id="patientId">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="full_name">Full name</label>
+                        <input id="full_name" required maxlength="100" placeholder="Enter patient name">
+                    </div>
+                    <div class="field">
+                        <label for="date_of_birth">Date of birth</label>
+                        <input id="date_of_birth" type="text" required placeholder="DD.MM.YYYY">
+                    </div>
+                    <div class="field">
+                        <label for="email">Email address</label>
+                        <input id="email" type="email" required placeholder="patient@example.com">
+                    </div>
+                    <div class="field">
+                        <label for="glucose">Glucose</label>
+                        <input id="glucose" type="number" min="0" step="any" required placeholder="Enter value">
+                    </div>
+                    <div class="field">
+                        <label for="haemoglobin">Haemoglobin</label>
+                        <input id="haemoglobin" type="number" min="0" step="any" required placeholder="Enter value">
+                    </div>
+                    <div class="field">
+                        <label for="cholesterol">Cholesterol</label>
+                        <input id="cholesterol" type="number" min="0" step="any" required placeholder="Enter value">
+                    </div>
+                </div>
+                <div id="formMessage" class="message hidden"></div>
+                <div class="form-actions">
+                    <button type="button" class="secondary-btn" onclick="hidePatientForm()">Cancel</button>
+                    <button type="submit" class="primary-btn" id="saveBtn">Save patient</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="patients" class="panel patients-panel">
+            <div class="section-heading patients-heading">
+                <div>
+                    <p class="eyebrow">RECORD MANAGEMENT</p>
+                    <h2>Patient records <span class="heading-count" id="recordCount">0</span></h2>
+                    <p class="section-subtitle">Browse patient details and their recorded measurements.</p>
+                </div>
+                <div class="search-wrap">
+                    <span>⌕</span>
+                    <input type="search" id="searchInput" placeholder="Search name or email..." aria-label="Search patients">
+                </div>
+            </div>
+
+            <div id="patientTable" class="patient-grid" aria-live="polite">
+                <div class="empty-state">Loading patient records...</div>
+            </div>
+        </section>
+
+        <footer>
+            <span>HealthTrack · Gokul Infocare Task 2</span>
+            <span>AI remarks are for educational purposes only, not a medical diagnosis.</span>
+        </footer>
+    </main>
+</div>
+
+<script>
+let patients = [];
+const form = document.getElementById("patientForm");
+const formMessage = document.getElementById("formMessage");
+
+// Light / dark theme preference
+const themeToggle = document.getElementById("themeToggle");
+const themeToggleIcon = document.getElementById("themeToggleIcon");
+const themeToggleLabel = document.getElementById("themeToggleLabel");
+
+function applyTheme(theme) {
+    const isDark = theme === "dark";
+    document.body.classList.toggle("dark-mode", isDark);
+    themeToggleIcon.textContent = isDark ? "☀" : "☾";
+    themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
+    themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    themeToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+}
+
+const savedTheme = localStorage.getItem("healthtrack-theme") || "light";
+applyTheme(savedTheme);
+
+themeToggle.addEventListener("click", () => {
+    const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+    localStorage.setItem("healthtrack-theme", nextTheme);
+    applyTheme(nextTheme);
+});
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+async function loadPatients() {
+    const container = document.getElementById("patientTable");
+    try {
+        const response = await fetch("/api/patients");
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || "Unable to load patients.");
+        patients = result.patients || [];
+        renderPatients();
+        updateStatistics();
+    } catch (error) {
+        container.innerHTML = `<div class="empty-state error-state">${escapeHTML(error.message)}</div>`;
+    }
+}
+
+function renderPatients() {
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const filtered = patients.filter(patient =>
+        String(patient.full_name).toLowerCase().includes(query) ||
+        String(patient.email).toLowerCase().includes(query)
+    );
+
+    const container = document.getElementById("patientTable");
+    document.getElementById("recordCount").textContent = filtered.length;
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">No patient records found.</div>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map(patient => {
+        const initials = String(patient.full_name || "P")
+            .trim().split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
+
+        return `
+        <article class="patient-card">
+            <div class="patient-card-head">
+                <div class="patient-identity">
+                    <div class="avatar">${escapeHTML(initials)}</div>
+                    <div class="patient-name-wrap">
+                        <span class="patient-id">PATIENT #${Number(patient.id)}</span>
+                        <h3>${escapeHTML(patient.full_name)}</h3>
+                        <p>${escapeHTML(patient.email)}</p>
+                    </div>
+                </div>
+                <span class="record-dot" title="Record saved"></span>
+            </div>
+
+            <div class="patient-meta">
+                <span class="meta-label">DATE OF BIRTH</span>
+                <strong>${escapeHTML(patient.date_of_birth)}</strong>
+            </div>
+
+            <div class="measurements">
+                <div class="measurement glucose">
+                    <span>Glucose</span>
+                    <strong>${escapeHTML(patient.glucose)}</strong>
+                </div>
+                <div class="measurement haemoglobin">
+                    <span>Haemoglobin</span>
+                    <strong>${escapeHTML(patient.haemoglobin)}</strong>
+                </div>
+                <div class="measurement cholesterol">
+                    <span>Cholesterol</span>
+                    <strong>${escapeHTML(patient.cholesterol)}</strong>
+                </div>
+            </div>
+
+            <div class="ai-remarks">
+                <div class="remarks-heading"><span class="ai-spark">✦</span> AI-generated remarks</div>
+                <p>${escapeHTML(patient.remarks || "AI analysis has not been generated yet.")}</p>
+                <small>Educational information only · Not a medical diagnosis</small>
+            </div>
+
+            <div class="patient-actions">
+                <button class="edit-btn" onclick="editPatient(${Number(patient.id)})">Edit</button>
+                <button class="analyze-btn" onclick="analyzePatient(${Number(patient.id)}, this)">✦ AI Analyze</button>
+                <button class="delete-btn" onclick="deletePatient(${Number(patient.id)})">Delete</button>
+            </div>
+        </article>`;
+    }).join("");
+}
+
+function updateStatistics() {
+    document.getElementById("totalPatients").textContent = patients.length;
+
+    function average(field) {
+        if (patients.length === 0) return "—";
+        const validValues = patients.map(patient => Number(patient[field])).filter(Number.isFinite);
+        if (!validValues.length) return "—";
+        return (validValues.reduce((sum, value) => sum + value, 0) / validValues.length).toFixed(1);
+    }
+
+    document.getElementById("avgGlucose").textContent = average("glucose");
+    document.getElementById("avgHaemoglobin").textContent = average("haemoglobin");
+    document.getElementById("avgCholesterol").textContent = average("cholesterol");
+}
+
+function showPatientForm() {
+    document.getElementById("patient-form").classList.remove("hidden");
+    document.getElementById("patient-form").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function hidePatientForm() {
+    document.getElementById("patient-form").classList.add("hidden");
+    form.reset();
+    document.getElementById("patientId").value = "";
+    document.getElementById("formTitle").textContent = "Register new patient";
+    document.getElementById("saveBtn").textContent = "Save patient";
+    formMessage.className = "message hidden";
+}
+
+function showMessage(message, isError = true) {
+    formMessage.textContent = message;
+    formMessage.className = isError ? "message error" : "message success";
+}
+
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const id = document.getElementById("patientId").value;
+    const data = {
+        full_name: document.getElementById("full_name").value.trim(),
+        date_of_birth: document.getElementById("date_of_birth").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        glucose: document.getElementById("glucose").value,
+        haemoglobin: document.getElementById("haemoglobin").value,
+        cholesterol: document.getElementById("cholesterol").value
+    };
+
+    const url = id ? `/api/patients/${id}` : "/api/patients";
+    const method = id ? "PUT" : "POST";
+    const saveButton = document.getElementById("saveBtn");
+
+    try {
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+        const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+            const messages = result.errors
+                ? Object.entries(result.errors).map(([field, message]) => `${field}: ${message}`).join(" | ")
+                : result.message;
+            showMessage(messages || "Unable to save patient.");
+            return;
+        }
+
+        hidePatientForm();
+        await loadPatients();
+        alert(result.message);
+    } catch (error) {
+        showMessage("Server connection failed. Please try again.");
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = document.getElementById("patientId").value
+            ? "Update patient" : "Save patient";
+    }
+});
+
+function editPatient(id) {
+    const patient = patients.find(item => Number(item.id) === Number(id));
+    if (!patient) {
+        alert("Patient record not found.");
+        return;
+    }
+
+    document.getElementById("patientId").value = patient.id;
+    document.getElementById("full_name").value = patient.full_name;
+    document.getElementById("date_of_birth").value = patient.date_of_birth;
+    document.getElementById("email").value = patient.email;
+    document.getElementById("glucose").value = patient.glucose;
+    document.getElementById("haemoglobin").value = patient.haemoglobin;
+    document.getElementById("cholesterol").value = patient.cholesterol;
+    document.getElementById("formTitle").textContent = "Edit patient";
+    document.getElementById("saveBtn").textContent = "Update patient";
+    formMessage.className = "message hidden";
+    showPatientForm();
+}
+
+async function deletePatient(id) {
+    const patient = patients.find(item => Number(item.id) === Number(id));
+    if (!patient) return;
+
+    const confirmed = confirm(`Are you sure you want to delete ${patient.full_name}?`);
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`/api/patients/${id}`, { method: "DELETE" });
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message || "Unable to delete patient.");
+            return;
+        }
+
+        await loadPatients();
+        alert(result.message);
+    } catch (error) {
+        alert("Server connection failed.");
+    }
+}
+
+async function analyzePatient(id, button) {
+    const patient = patients.find(item => Number(item.id) === Number(id));
+    if (!patient) {
+        alert("Patient record not found.");
+        return;
+    }
+
+    const confirmed = confirm(`Generate AI health remarks for ${patient.full_name}?`);
+    if (!confirmed) return;
+
+    const originalText = button.textContent;
+    try {
+        button.disabled = true;
+        button.textContent = "Analyzing...";
+        const response = await fetch(`/api/patients/${id}/analyze`, { method: "POST" });
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.message || "AI analysis failed.");
+
+        await loadPatients();
+        alert("AI remarks generated successfully!\n\n" + result.remarks);
+    } catch (error) {
+        alert("AI Analysis Error:\n" + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
+
+document.getElementById("searchInput").addEventListener("input", renderPatients);
+loadPatients();
+</script>
+</body>
+</html>
